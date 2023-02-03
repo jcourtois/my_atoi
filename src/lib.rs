@@ -13,17 +13,13 @@ impl Solution {
 
         for c in s.chars() {
             match (c, expect_only_digits) {
-                ('0'..='9', _) => {
-                    expect_only_digits = true;
-                    num_string.push(c)
-                }
-                ('-' | '+', false) => {
-                    expect_only_digits = true;
-                    num_string.push(c);
-                }
                 (' ', false) => continue,
+                ('-' | '+', false) => (),
+                ('0'..='9', _) => (),
                 _ => break,
             }
+            expect_only_digits = true;
+            num_string.push(c);
         }
 
         str::parse(&num_string).unwrap_or_else(|e: num::ParseIntError| match e.kind() {

@@ -1,41 +1,33 @@
 #[cfg(test)]
+use std::num;
+
+#[cfg(test)]
 struct Solution {}
 
 #[cfg(test)]
 impl Solution {
     pub fn my_atoi(s: String) -> i32 {
-        let mut num_string = String::with_capacity(10);
         let mut expect_only_digits = false;
+        let mut num_string = String::with_capacity(10);
 
         for c in s.chars() {
-            match c {
-                c if c.is_numeric() => {
+            match (c, expect_only_digits) {
+                ('0'..='9', _) => {
                     expect_only_digits = true;
                     num_string.push(c)
                 }
-                c if c == '-' || c == '+' => {
-                    if expect_only_digits {
-                        break;
-                    }
+                ('-' | '+', false) => {
                     expect_only_digits = true;
                     num_string.push(c);
-                },
-                c if c == ' ' => {
-                    if expect_only_digits {
-                        break;
-                    }
-                    continue;
-                },
-                _ => {
-                    break;
                 }
+                (' ', false) => continue,
+                _ => break,
             }
         }
-        let result = str::parse(&num_string);
 
-        result.unwrap_or_else(|e: std::num::ParseIntError| match e.kind() {
-            std::num::IntErrorKind::PosOverflow => i32::MAX,
-            std::num::IntErrorKind::NegOverflow => i32::MIN,
+        str::parse(&num_string).unwrap_or_else(|e: num::ParseIntError| match e.kind() {
+            num::IntErrorKind::PosOverflow => i32::MAX,
+            num::IntErrorKind::NegOverflow => i32::MIN,
             _ => 0,
         })
     }
@@ -53,6 +45,11 @@ mod tests {
     #[test]
     fn _space_is_0() {
         assert_eq!(Solution::my_atoi(String::from(" ")), 0);
+    }
+
+    #[test]
+    fn _neg_five_with_extra_negative() {
+        assert_eq!(Solution::my_atoi(String::from("-5-")), -5);
     }
 
     #[test]

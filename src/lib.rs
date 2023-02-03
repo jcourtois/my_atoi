@@ -6,6 +6,7 @@ struct Solution {}
 
 #[cfg(test)]
 impl Solution {
+    // benched at 0ms and 2MB of memory
     pub fn my_atoi(s: String) -> i32 {
         let mut expect_only_digits = false;
         let mut num_string = String::with_capacity(10);
